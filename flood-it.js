@@ -23,13 +23,19 @@ function Button(props) {
 
 function InstructionText() {
   return (
-    <p>These are instructions.</p>
+    <p className="instructions">These are instructions.</p>
   )
 }
 
 function MovesText(props) {
   return (
     <span>{"Moves: " + props.moves + "/" + props.maxMoves}</span>
+  )
+}
+
+function GameOverText(props) {
+  return (
+    <span className="game-over-text">{props.text}</span>
   )
 }
 
