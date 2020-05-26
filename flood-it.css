@@ -1,3 +1,33 @@
 .game-name {
   font-size: xx-large;
+  margin:20px;
+}
+
+.board-square {
+  margin:0px;
+  border-width: 0px;
+}
+
+.board-square.red {
+  background-color: "#fc0f03";
+}
+
+.board-square.blue {
+  background-color: "#354bdb";
+}
+
+.board-square.yellow {
+  background-color: "#e8e517";
+}
+
+.board-square.green {
+  background-color: "#258011";
+}
+
+.board-square.purple {
+  background-color: "#a315eb";
+}
+
+.board-square.black {
+  background-color: "#000000";
 }
