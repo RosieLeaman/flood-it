@@ -17,6 +17,14 @@
   display:inline-block;
   vertical-align: top;
   margin-left: 15px;
+  font-size:larger;
+}
+
+.infobox-button {
+  display:block;
+  margin-top:10px;
+  font-size:large;
+  border-radius:5px;
 }
 
 .board {

@@ -81,15 +81,15 @@ class Header extends React.Component {
 
   render() {
     return (
-      <div className="header">
-        <span className="game-name">Flood it!</span>
+      <div className = "header">
+        <span className = "game-name">Flood it!</span>
         <Button
-          className="header-button"
-          text="New game"
+          className = "header-button"
+          text = "New game"
         />
         <Button
-          className="header-button"
-          text="Instructions"
+          className = "header-button"
+          text = "Instructions"
         />
         <InstructionText/>
       </div>
@@ -108,6 +108,10 @@ class InfoBox extends React.Component {
         <MovesText
           moves = {this.props.moves}
           maxMoves = {this.props.maxMoves}
+        />
+        <Button
+          text = "Undo last move"
+          className = "infobox-button"
         />
       </div>
     )
