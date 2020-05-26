@@ -1,6 +1,27 @@
+.game {
+  font-family:"Helvetica", sans-serif;
+}
+
 .game-name {
   font-size: xx-large;
   margin:20px;
+}
+
+.game-main {
+  display:inline-block;
+  width:100%;
+}
+
+.infobox {
+  width:30%;
+  display:inline-block;
+  vertical-align: top;
+  margin-left: 15px;
+}
+
+.board {
+  /* width:70%; */
+  display:inline-block;
 }
 
 .board-row {
@@ -40,4 +61,10 @@
 
 .board-square.black {
   background-color: #000000;
+}
+
+/* ban the button highlighting */
+
+button:focus, input[type="button"]:focus, button:active, input[type="button"]:active {
+  outline: none;
 }

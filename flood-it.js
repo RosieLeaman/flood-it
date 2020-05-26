@@ -10,7 +10,7 @@ function getNRandomColours(availableColours,n){
   return colours
 }
 
-function Button(props){
+function Button(props) {
   return (
     <button
       onClick={props.onClick}
@@ -21,9 +21,15 @@ function Button(props){
   )
 }
 
-function InstructionText(){
+function InstructionText() {
   return (
     <p>These are instructions.</p>
+  )
+}
+
+function MovesText(props) {
+  return (
+    <span>{"Moves: " + props.moves + "/" + props.maxMoves}</span>
   )
 }
 
@@ -91,12 +97,32 @@ class Header extends React.Component {
   }
 }
 
+class InfoBox extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className="infobox">
+        <MovesText
+          moves = {this.props.moves}
+          maxMoves = {this.props.maxMoves}
+        />
+      </div>
+    )
+  }
+}
+
 const availableColours = ['red','blue','green','yellow','purple','black'];
 
 const nRows = 20;
 const nCols = 20;
 
 const board = getNRandomColours(availableColours,nRows*nCols);
+
+const moves = 3;
+const maxMoves = 25;
 
 class Game extends React.Component {
   constructor(props) {
@@ -105,13 +131,19 @@ class Game extends React.Component {
 
   render() {
     return (
-      <div>
-      <Header/>
-      <Board
-        nRows = {nRows}
-        nCols = {nCols}
-        board = {board}
-      />
+      <div className="game">
+        <Header/>
+        <div className = "game-main">
+          <Board
+            nRows = {nRows}
+            nCols = {nCols}
+            board = {board}
+          />
+          <InfoBox
+            moves = {moves}
+            maxMoves = {maxMoves}
+          />
+        </div>
       </div>
     )
   }
