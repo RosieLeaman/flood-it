@@ -33,7 +33,38 @@ class Board extends React.Component {
   }
 
   renderSquare(key,colour){
-    
+    return (
+      <Button
+        key = {key}
+        className = {"board-square " + colour}
+      />
+    )
+  }
+
+  makeRow(rowIndex){
+    const row = Array(this.props.nCols).fill(0).map((col,colIndex) => {
+      const colour = this.props.board[rowIndex*this.props.nRows + colIndex];
+
+      return this.renderSquare(colIndex,colour);
+    })
+    return (
+      <div key = {rowIndex} className="board-row">
+        {row}
+      </div>
+    )
+  }
+
+  render() {
+
+    const board = Array(this.props.nRows).fill(0).map((row,rowIndex) => {
+      return (this.makeRow(rowIndex));
+    })
+
+    return (
+      <div className="board">
+        {board}
+      </div>
+    )
   }
 }
 
@@ -60,9 +91,12 @@ class Header extends React.Component {
   }
 }
 
-const availableColours = ['red','blue','green','yellow','orange']
+const availableColours = ['red','blue','green','yellow','purple','black'];
 
-const board = getNRandomColours(availableColours,100)
+const nRows = 20;
+const nCols = 20;
+
+const board = getNRandomColours(availableColours,nRows*nCols);
 
 class Game extends React.Component {
   constructor(props) {
@@ -71,7 +105,14 @@ class Game extends React.Component {
 
   render() {
     return (
+      <div>
       <Header/>
+      <Board
+        nRows = {nRows}
+        nCols = {nCols}
+        board = {board}
+      />
+      </div>
     )
   }
 }

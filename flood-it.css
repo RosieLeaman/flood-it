@@ -3,31 +3,41 @@
   margin:20px;
 }
 
+.board-row {
+  margin:0px;
+  padding:0px;
+  border-width:0px;
+  display:flex;
+  height:10px;
+}
+
 .board-square {
   margin:0px;
   border-width: 0px;
+  width:10px;
+  height:100%;
 }
 
 .board-square.red {
-  background-color: "#fc0f03";
+  background-color: #fc0f03;
 }
 
 .board-square.blue {
-  background-color: "#354bdb";
+  background-color: #354bdb;
 }
 
 .board-square.yellow {
-  background-color: "#e8e517";
+  background-color: #e8e517;
 }
 
 .board-square.green {
-  background-color: "#258011";
+  background-color: #258011;
 }
 
 .board-square.purple {
-  background-color: "#a315eb";
+  background-color: #a315eb;
 }
 
 .board-square.black {
-  background-color: "#000000";
+  background-color: #000000;
 }
