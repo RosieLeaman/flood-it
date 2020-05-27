@@ -62,11 +62,12 @@ class Board extends React.Component {
     super(props);
   }
 
-  renderSquare(key,colour){
+  renderSquare(key,colour,row,col){
     return (
       <Button
         key = {key}
         className = {"board-square " + colour}
+        onClick = {() => this.props.onSquareClick(row,col)}
       />
     )
   }
@@ -75,7 +76,7 @@ class Board extends React.Component {
     const row = Array(this.props.nCols).fill(0).map((col,colIndex) => {
       const colour = this.props.board[rowIndex][colIndex];
 
-      return this.renderSquare(colIndex,colour);
+      return this.renderSquare(colIndex,colour,rowIndex,colIndex);
     })
     return (
       <div key = {rowIndex} className="board-row">
@@ -110,6 +111,10 @@ class Header extends React.Component {
           className = "header-button"
           text = "New Game"
         />
+        <Button
+          className = "header-button"
+          text = "Show Instructions"
+        />
         <InstructionText/>
       </div>
     )
@@ -132,29 +137,85 @@ class InfoBox extends React.Component {
           text = "Undo last move"
           className = "infobox-button"
         />
-
-        <Button
-          text = "Undo last move"
-          className = "infobox-button"
-        />
       </div>
     )
   }
 }
 
 const availableColours = ['red','blue','green','yellow','purple','black'];
+const alternateColour = {'red':'blue','blue':'green','green':'yellow','yellow':'purple','purple':'black','black':'red'}
 
-const nRows = 20;
-const nCols = 20;
+const nRows = 15;
+const nCols = 15;
 
-const board = Array(nRows).fill(0).map((el) => getNRandomColours(availableColours,nCols));
-
-const moves = 3;
-const maxMoves = 25;
+const showInstructions = false;
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
+
+    const board = Array(nRows).fill(0).map((el) => getNRandomColours(availableColours,nCols));
+    // we need to fix the case where the top left corner can have the same colour as its neighbours
+    if (board[0][0] === board[0][1]){
+      board[0][1] = alternateColour[board[0][1]]
+    }
+    if (board[0][0] === board[1][0]){
+      board[1][0] = alternateColour[board[1][0]]
+    }
+
+    const included = Array(nRows).fill(0).map(() => {return Array(nCols).fill(false)});
+    included[0][0] = true;
+
+    this.state = {
+      board: board,
+      included: included,
+      moves: 0,
+      maxMoves: 25,
+    }
+  }
+
+  handleSquareClick(row,col) {
+    const nextBoard = this.state.board;
+    const nextIncluded = this.state.included;
+
+    // return early if we have already clicked this square
+    if (nextIncluded[row][col]) {
+      return;
+    }
+
+    // get the colour of that square
+    const chosenColour = nextBoard[row][col];
+
+    // set the colour of every already included square to that colour
+    // and set its neighbours to be both included and that colour
+    // note that this is NOT efficient, it over-checks many squares. This may not be a problem.
+    for (var i=0; i < nRows; i++){
+      for (var j=0; j < nCols; j++){
+        if (this.state.included[i][j]){
+          nextBoard[i][j] = chosenColour;
+
+          const neighbourList = getNeighbourIndices(nRows,nCols,i,j)
+
+          for (var k=0; k < neighbourList.length; k++){
+            // neighbours become included IF they are chosen colour
+            if (nextBoard[neighbourList[k][0]][neighbourList[k][1]] === chosenColour){
+              nextIncluded[neighbourList[k][0]][neighbourList[k][1]] = true;
+            }
+          }
+        }
+      }
+    }
+
+    console.log(nextBoard)
+    console.log(nextIncluded)
+    console.log(this.state.moves)
+
+    this.setState({
+      board: nextBoard,
+      included: nextIncluded,
+      moves: this.state.moves + 1,
+      }
+    )
   }
 
   render() {
@@ -165,11 +226,12 @@ class Game extends React.Component {
           <Board
             nRows = {nRows}
             nCols = {nCols}
-            board = {board}
+            board = {this.state.board}
+            onSquareClick = {(row,col) => this.handleSquareClick(row,col)}
           />
           <InfoBox
-            moves = {moves}
-            maxMoves = {maxMoves}
+            moves = {this.state.moves}
+            maxMoves = {this.state.maxMoves}
           />
         </div>
       </div>
