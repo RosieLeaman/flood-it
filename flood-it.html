@@ -8,13 +8,14 @@
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
     <!-- Don't use this in production: -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script> -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <link rel="stylesheet" href="flood-it.css">
   </head>
   <body>
     <div id="game"></div>
-    <script type="text/babel" src="flood-it.js"></script>
+      <script type="text/babel" src="flood-it.js"></script>
     <!--
       Note: this page is a great way to try React but it's not suitable for production.
       It slowly compiles JSX with Babel in the browser and uses a large development build of React.
