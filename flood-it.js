@@ -55,7 +55,7 @@ class Board extends React.Component {
 
   makeRow(rowIndex){
     const row = Array(this.props.nCols).fill(0).map((col,colIndex) => {
-      const colour = this.props.board[rowIndex*this.props.nRows + colIndex];
+      const colour = this.props.board[rowIndex][colIndex];
 
       return this.renderSquare(colIndex,colour);
     })
@@ -91,11 +91,7 @@ class Header extends React.Component {
         <span className = "game-name">Flood it!</span>
         <Button
           className = "header-button"
-          text = "New game"
-        />
-        <Button
-          className = "header-button"
-          text = "Instructions"
+          text = "New Game"
         />
         <InstructionText/>
       </div>
@@ -119,6 +115,11 @@ class InfoBox extends React.Component {
           text = "Undo last move"
           className = "infobox-button"
         />
+
+        <Button
+          text = "Undo last move"
+          className = "infobox-button"
+        />
       </div>
     )
   }
@@ -129,7 +130,7 @@ const availableColours = ['red','blue','green','yellow','purple','black'];
 const nRows = 20;
 const nCols = 20;
 
-const board = getNRandomColours(availableColours,nRows*nCols);
+const board = Array(nRows).fill(0).map((el) => getNRandomColours(availableColours,nCols));
 
 const moves = 3;
 const maxMoves = 25;
