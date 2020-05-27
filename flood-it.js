@@ -10,6 +10,24 @@ function getNRandomColours(availableColours,n){
   return colours
 }
 
+function getNeighbourIndices(nRows,nCols,row,col) {
+  const neighbourIndices = []
+  if (row > 0) {
+    neighbourIndices.push([row-1,col])
+  }
+  if (row < nRows - 1) {
+    neighbourIndices.push([row+1,col])
+  }
+  if (col > 0) {
+    neighbourIndices.push([row,col-1])
+  }
+  if (col < nCols - 1) {
+    neighbourIndices.push([row,col+1])
+  }
+
+  return neighbourIndices
+}
+
 function Button(props) {
   return (
     <button
@@ -67,7 +85,6 @@ class Board extends React.Component {
   }
 
   render() {
-
     const board = Array(this.props.nRows).fill(0).map((row,rowIndex) => {
       return (this.makeRow(rowIndex));
     })
