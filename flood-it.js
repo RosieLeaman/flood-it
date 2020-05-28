@@ -178,6 +178,11 @@ class InfoBox extends React.Component {
           <GameOverText
             text="Failed :("
           />
+          <Button
+            text = "Reset game"
+            className = "infobox-button"
+            onClick = {() => this.props.onReset()}
+          />
         </div>
       )
     }
@@ -365,6 +370,30 @@ class Game extends React.Component {
     })
   }
 
+  handleReset() {
+    // copy the initialBoard this time to board
+    const boardCopy = []
+
+    for (var i=0; i < this.state.initialBoard.length; i ++){
+      boardCopy[i] = this.state.initialBoard[i].slice();
+    }
+
+    // reset the included
+    const included = Array(this.state.nRows).fill(0).map(() => {return Array(this.state.nCols).fill(false)});
+    included[0][0] = true;
+
+    this.setState({
+      board: boardCopy,
+      included: included,
+      prevBoard: null,
+      prevIncluded: null,
+      moves: 0,
+      won: false,
+      lost: false,
+    })
+
+  }
+
   render() {
     return (
       <div className="game">
@@ -384,6 +413,7 @@ class Game extends React.Component {
             onUndo = {() => this.handleUndo()}
             won = {this.state.won}
             lost = {this.state.lost}
+            onReset = {() => this.handleReset()}
           />
         </div>
       </div>
