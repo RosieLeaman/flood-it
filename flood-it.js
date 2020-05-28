@@ -28,6 +28,17 @@ function getNeighbourIndices(nRows,nCols,row,col) {
   return neighbourIndices
 }
 
+function checkWon(included) {
+  for (var i=0; i <= included.length-1 ; i++){
+    for (var j=0; j <= included[i].length-1 ; j++){
+      if (!included[i][j]){
+        return false
+      }
+    }
+  }
+  return true
+}
+
 function Button(props) {
   return (
     <button
@@ -150,6 +161,31 @@ class InfoBox extends React.Component {
     super(props);
   }
 
+  // only call this if game is won or lost
+  gameOver(){
+    if (this.props.won) {
+      return(
+        <div className="game-over">
+          <GameOverText
+            text="Success!!"
+          />
+        </div>
+      )
+    }
+    else if (this.props.lost) {
+      return(
+        <div className="game-over">
+          <GameOverText
+            text="Failed :("
+          />
+        </div>
+      )
+    }
+    else {
+      return (null)
+    }
+  }
+
   render() {
     return (
       <div className="infobox">
@@ -162,6 +198,7 @@ class InfoBox extends React.Component {
           className = "infobox-button"
           onClick = {() => this.props.onUndo()}
         />
+        {this.gameOver()}
       </div>
     )
   }
@@ -188,6 +225,8 @@ class Game extends React.Component {
       prevIncluded: null,
       moves: 0,
       maxMoves: 25,
+      won: false,
+      lost: false,
     }
   }
 
@@ -230,7 +269,8 @@ class Game extends React.Component {
 
   handleSquareClick(row,col) {
     // return early if we have already clicked this square
-    if (this.state.included[row][col]) {
+    // or if we have won or lost
+    if (this.state.included[row][col] || this.state.won == true || this.state.lost == true) {
       return;
     }
 
@@ -251,9 +291,23 @@ class Game extends React.Component {
     // note that this is NOT efficient, it over-checks many squares.
 
     nextBoard[0][0] = chosenColour;
-    const checked = Array(this.state.nRows).fill(0).map((el) => {return Array(this.state.nCols).fill(false)})
+    const checked = Array(this.state.nRows).fill(0).map((el) => {return Array(this.state.nCols).fill(false)});
 
-    this.floodNeighbours(nextBoard,nextIncluded,checked,0,0,chosenColour)
+    this.floodNeighbours(nextBoard,nextIncluded,checked,0,0,chosenColour);
+
+    // check whether we have won
+    const won = checkWon(nextIncluded);
+
+    console.log("won? " + won)
+
+    // check if we have lost
+    let lost;
+    if (this.state.moves + 1 == this.state.maxMoves && !won){
+      lost = true;
+    }
+    else {
+      lost = false;
+    }
 
     this.setState({
       board: nextBoard,
@@ -261,6 +315,8 @@ class Game extends React.Component {
       prevBoard: this.state.board,
       prevIncluded: this.state.included,
       moves: this.state.moves + 1,
+      won: won,
+      lost: lost,
       }
     )
   }
@@ -277,6 +333,8 @@ class Game extends React.Component {
       prevBoard: null,
       prevIncluded: null,
       moves: this.state.moves - 1,
+      won: false,
+      lost: false,
     })
   }
 
@@ -289,6 +347,8 @@ class Game extends React.Component {
       prevBoard: null,
       prevIncluded: null,
       moves: 0,
+      won: false,
+      lost: false,
     })
   }
 
@@ -309,6 +369,8 @@ class Game extends React.Component {
             moves = {this.state.moves}
             maxMoves = {this.state.maxMoves}
             onUndo = {() => this.handleUndo()}
+            won = {this.state.won}
+            lost = {this.state.lost}
           />
         </div>
       </div>
