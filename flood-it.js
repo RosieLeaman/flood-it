@@ -39,14 +39,20 @@ function Button(props) {
   )
 }
 
-function InstructionText() {
-  return (
-    <div>
-      <p className="instructions">The aim of the game is to fill the whole grid with the same colour before you run out of moves.</p>
-      <p className="instructions">You start with the square in the top left corner. Clicking an adjacent square will change the colours of the squares that you "own" to that new colour, and add all adjacent squares of that colour to the squares you "own". By choosing carefully which squares you click, you can fill the grid all with the same colour before you run out of moves.</p>
-      <p className="instructions">Try to fill the grid using as few moves as possible!</p>
-    </div>
-  )
+function InstructionText(props) {
+  if (props.show){
+    return (
+      <div>
+        <p className="instructions">The aim of the game is to fill the whole grid with the same colour before you run out of moves.</p>
+        <p className="instructions">You start with the square in the top left corner. Clicking an adjacent square will change the colours of the squares that you "own" to that new colour, and add all adjacent squares of that colour to the squares you "own". By choosing carefully which squares you click, you can fill the grid all with the same colour before you run out of moves.</p>
+        <p className="instructions">Try to fill the grid using as few moves as possible!</p>
+      </div>
+    )
+  }
+  else{
+    // this means do not render this
+    return(null)
+  }
 }
 
 function MovesText(props) {
@@ -105,6 +111,16 @@ class Board extends React.Component {
 class Header extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      showInstructions: false,
+    }
+  }
+
+  showInstructions() {
+    this.setState({
+      showInstructions: !this.state.showInstructions,
+    })
   }
 
   render() {
@@ -118,9 +134,12 @@ class Header extends React.Component {
         />
         <Button
           className = "header-button"
-          text = "Show Instructions"
+          text = {this.state.showInstructions ? "Hide Instructions" : "Show Instructions"}
+          onClick = {() => this.showInstructions()}
         />
-        <InstructionText/>
+        <InstructionText
+          show = {this.state.showInstructions}
+        />
       </div>
     )
   }
