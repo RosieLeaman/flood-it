@@ -42,14 +42,19 @@
   padding:0px;
   border-width:0px;
   display:flex;
-  height:10px;
+  height:20px;
 }
 
 .board-square {
   margin:0px;
   border-width: 0px;
-  width:10px;
-  height:100%;
+  width:20px;
+  height:20px;
+}
+
+/* ban the button highlighting */
+.board-square:focus,.board-square:active {
+  outline:none
 }
 
 .board-square.red {
@@ -74,10 +79,4 @@
 
 .board-square.black {
   background-color: #000000;
-}
-
-/* ban the button highlighting */
-
-button:focus, input[type="button"]:focus, button:active, input[type="button"]:active {
-  outline: none;
 }
