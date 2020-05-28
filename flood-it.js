@@ -216,9 +216,17 @@ class Game extends React.Component {
     // make the new boards using the base nrows and ncols
     const newBoard = this.makeNewBoard(this.props.nRows,this.props.nCols)
 
+    // copy the board so we can reset to the start if we lose
+    const boardCopy = [];
+
+    for (var i=0; i < newBoard[0].length; i ++){
+      boardCopy[i] = newBoard[0][i].slice();
+    }
+
     this.state = {
       nRows:this.props.nRows,
       nCols:this.props.nCols,
+      initialBoard: boardCopy,
       board: newBoard[0],
       included: newBoard[1],
       prevBoard: null,
@@ -298,8 +306,6 @@ class Game extends React.Component {
     // check whether we have won
     const won = checkWon(nextIncluded);
 
-    console.log("won? " + won)
-
     // check if we have lost
     let lost;
     if (this.state.moves + 1 == this.state.maxMoves && !won){
@@ -341,7 +347,14 @@ class Game extends React.Component {
   handleNewGame() {
     const newBoard = this.makeNewBoard(this.props.nRows,this.props.nCols)
 
+    const boardCopy = []
+
+    for (var i=0; i < newBoard[0].length; i ++){
+      boardCopy[i] = newBoard[0][i].slice();
+    }
+
     this.setState({
+      initialBoard: boardCopy,
       board: newBoard[0],
       included: newBoard[1],
       prevBoard: null,
