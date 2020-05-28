@@ -114,6 +114,7 @@ class Header extends React.Component {
         <Button
           className = "header-button"
           text = "New Game"
+          onClick = {() => this.props.onNewGame()}
         />
         <Button
           className = "header-button"
@@ -256,13 +257,28 @@ class Game extends React.Component {
       included: this.state.prevIncluded,
       prevBoard: null,
       prevIncluded: null,
+      moves: this.state.moves - 1,
+    })
+  }
+
+  handleNewGame() {
+    const newBoard = this.makeNewBoard(this.props.nRows,this.props.nCols)
+
+    this.setState({
+      board: newBoard[0],
+      included: newBoard[1],
+      prevBoard: null,
+      prevIncluded: null,
+      moves: 0,
     })
   }
 
   render() {
     return (
       <div className="game">
-        <Header/>
+        <Header
+          onNewGame = {() => this.handleNewGame()}
+        />
         <div className = "game-main">
           <Board
             nRows = {this.state.nRows}
