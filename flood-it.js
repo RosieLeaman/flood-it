@@ -136,6 +136,7 @@ class InfoBox extends React.Component {
         <Button
           text = "Undo last move"
           className = "infobox-button"
+          onClick = {() => this.props.onUndo()}
         />
       </div>
     )
@@ -145,8 +146,8 @@ class InfoBox extends React.Component {
 const availableColours = ['red','blue','green','yellow','purple','black'];
 const alternateColour = {'red':'blue','blue':'green','green':'yellow','yellow':'purple','purple':'black','black':'red'}
 
-const nRows = 15;
-const nCols = 15;
+const nRows = 12;
+const nCols = 12;
 
 const showInstructions = false;
 
@@ -167,20 +168,51 @@ class Game extends React.Component {
     included[0][0] = true;
 
     this.state = {
+      nRows:nRows,
+      nCols:nCols,
       board: board,
       included: included,
+      prevBoard: null,
+      prevIncluded: null,
       moves: 0,
       maxMoves: 25,
     }
   }
 
-  handleSquareClick(row,col) {
-    const nextBoard = this.state.board;
-    const nextIncluded = this.state.included;
+  floodNeighbours(board,included,checked,row,col,chosenColour){
+    checked[row][col] = true;
 
+    // find its neighbours
+    const neighbours = getNeighbourIndices(this.state.nRows,this.state.nCols,row,col)
+
+    for (var k=0; k < neighbours.length; k++){
+      // neighbours become included IF they are chosen colour OR they are already included
+      if (board[neighbours[k][0]][neighbours[k][1]] === chosenColour || included[neighbours[k][0]][neighbours[k][1]]){
+        included[neighbours[k][0]][neighbours[k][1]] = true;
+        board[neighbours[k][0]][neighbours[k][1]] = chosenColour;
+
+        // we only check neighbours of neighbours IF they have NOT ALREADY BEEN CHECKED!!
+        if (!checked[neighbours[k][0]][neighbours[k][1]]){
+          this.floodNeighbours(board,included,checked,neighbours[k][0],neighbours[k][1],chosenColour)
+        }
+      }
+    }
+    return;
+  }
+
+  handleSquareClick(row,col) {
     // return early if we have already clicked this square
-    if (nextIncluded[row][col]) {
+    if (this.state.included[row][col]) {
       return;
+    }
+
+    // actually duplicate the board so that we can make the undo button work
+    const nextBoard = [];
+    const nextIncluded = [];
+
+    for (var i=0; i < this.state.board.length; i ++){
+      nextBoard[i] = this.state.board[i].slice();
+      nextIncluded[i] = this.state.included[i].slice();
     }
 
     // get the colour of that square
@@ -188,34 +220,35 @@ class Game extends React.Component {
 
     // set the colour of every already included square to that colour
     // and set its neighbours to be both included and that colour
-    // note that this is NOT efficient, it over-checks many squares. This may not be a problem.
-    for (var i=0; i < nRows; i++){
-      for (var j=0; j < nCols; j++){
-        if (this.state.included[i][j]){
-          nextBoard[i][j] = chosenColour;
+    // note that this is NOT efficient, it over-checks many squares. 
 
-          const neighbourList = getNeighbourIndices(nRows,nCols,i,j)
+    nextBoard[0][0] = chosenColour;
+    const checked = Array(nRows).fill(0).map((el) => {return Array(nCols).fill(false)})
 
-          for (var k=0; k < neighbourList.length; k++){
-            // neighbours become included IF they are chosen colour
-            if (nextBoard[neighbourList[k][0]][neighbourList[k][1]] === chosenColour){
-              nextIncluded[neighbourList[k][0]][neighbourList[k][1]] = true;
-            }
-          }
-        }
-      }
-    }
-
-    console.log(nextBoard)
-    console.log(nextIncluded)
-    console.log(this.state.moves)
+    this.floodNeighbours(nextBoard,nextIncluded,checked,0,0,chosenColour)
 
     this.setState({
       board: nextBoard,
       included: nextIncluded,
+      prevBoard: this.state.board,
+      prevIncluded: this.state.included,
       moves: this.state.moves + 1,
       }
     )
+  }
+
+  handleUndo() {
+    // if we have no previous move can't exactly undo
+    if (this.state.prevBoard === null) {
+      return;
+    }
+
+    this.setState({
+      board: this.state.prevBoard,
+      included: this.state.prevIncluded,
+      prevBoard: null,
+      prevIncluded: null,
+    })
   }
 
   render() {
@@ -232,6 +265,7 @@ class Game extends React.Component {
           <InfoBox
             moves = {this.state.moves}
             maxMoves = {this.state.maxMoves}
+            onUndo = {() => this.handleUndo()}
           />
         </div>
       </div>
