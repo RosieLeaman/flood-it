@@ -146,15 +146,28 @@ class InfoBox extends React.Component {
 const availableColours = ['red','blue','green','yellow','purple','black'];
 const alternateColour = {'red':'blue','blue':'green','green':'yellow','yellow':'purple','purple':'black','black':'red'}
 
-const nRows = 12;
-const nCols = 12;
-
 const showInstructions = false;
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
 
+    // make the new boards using the base nrows and ncols
+    const newBoard = this.makeNewBoard(this.props.nRows,this.props.nCols)
+
+    this.state = {
+      nRows:this.props.nRows,
+      nCols:this.props.nCols,
+      board: newBoard[0],
+      included: newBoard[1],
+      prevBoard: null,
+      prevIncluded: null,
+      moves: 0,
+      maxMoves: 25,
+    }
+  }
+
+  makeNewBoard(nRows,nCols) {
     const board = Array(nRows).fill(0).map((el) => getNRandomColours(availableColours,nCols));
     // we need to fix the case where the top left corner can have the same colour as its neighbours
     if (board[0][0] === board[0][1]){
@@ -167,16 +180,7 @@ class Game extends React.Component {
     const included = Array(nRows).fill(0).map(() => {return Array(nCols).fill(false)});
     included[0][0] = true;
 
-    this.state = {
-      nRows:nRows,
-      nCols:nCols,
-      board: board,
-      included: included,
-      prevBoard: null,
-      prevIncluded: null,
-      moves: 0,
-      maxMoves: 25,
-    }
+    return [board,included]
   }
 
   floodNeighbours(board,included,checked,row,col,chosenColour){
@@ -220,10 +224,10 @@ class Game extends React.Component {
 
     // set the colour of every already included square to that colour
     // and set its neighbours to be both included and that colour
-    // note that this is NOT efficient, it over-checks many squares. 
+    // note that this is NOT efficient, it over-checks many squares.
 
     nextBoard[0][0] = chosenColour;
-    const checked = Array(nRows).fill(0).map((el) => {return Array(nCols).fill(false)})
+    const checked = Array(this.state.nRows).fill(0).map((el) => {return Array(this.state.nCols).fill(false)})
 
     this.floodNeighbours(nextBoard,nextIncluded,checked,0,0,chosenColour)
 
@@ -257,8 +261,8 @@ class Game extends React.Component {
         <Header/>
         <div className = "game-main">
           <Board
-            nRows = {nRows}
-            nCols = {nCols}
+            nRows = {this.state.nRows}
+            nCols = {this.state.nCols}
             board = {this.state.board}
             onSquareClick = {(row,col) => this.handleSquareClick(row,col)}
           />
@@ -274,6 +278,9 @@ class Game extends React.Component {
 }
 
 ReactDOM.render(
-  <Game />,
+  <Game
+    nRows = {12}
+    nCols = {12}
+  />,
   document.getElementById("game")
 );
